@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Persuasion Mission</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#6D5AE0; --bg2:#4C6EF5; --bg3:#2F80ED;
+    --panel:#FFFFFF;
+    --panel-2:#F4F1FF;
+    --ink:#241E3D;
+    --ink-soft:#6B6690;
+    --line: rgba(36,30,61,0.12);
+    --focus:#2B6CB0;
+    --shadow: 0 14px 34px rgba(45,32,110,0.22);
+
+    --brand1:#7C3AED; --brand2:#3B82F6; --brand-shadow:#4C2E9E;
+    --gold1:#FBBF24; --gold2:#F59E0B; --gold-shadow:#B8860B;
+
+    --right:#16A34A; --correct-bg: rgba(22,163,74,0.16);
+    --wrongc:#E11D48; --wrong-bg: rgba(225,29,72,0.14);
+
+    --c1:#3B82F6; --c1-bg:#EAF1FF; --c1-ink:#123B82;
+    --c2:#8B5CF6; --c2-bg:#F2ECFF; --c2-ink:#4C1D95;
+    --c3:#F59E0B; --c3-bg:#FFF4E0; --c3-ink:#7C4A03;
+    --c4:#14B8A6; --c4-bg:#E3FBF7; --c4-ink:#0F5C54;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg1:#241B4D; --bg2:#1E293B; --bg3:#0F172A;
+      --panel:#1C1832;
+      --panel-2:#272141;
+      --ink:#EFEBFF;
+      --ink-soft:#A39DC9;
+      --line: rgba(239,235,255,0.14);
+      --shadow: 0 16px 36px rgba(0,0,0,0.55);
+      --right:#4ADE80; --correct-bg: rgba(74,222,128,0.20);
+      --wrongc:#FB7185; --wrong-bg: rgba(251,113,133,0.18);
+      --c1-bg: rgba(59,130,246,0.20); --c1-ink:#CFE0FF;
+      --c2-bg: rgba(139,92,246,0.22); --c2-ink:#E4D9FF;
+      --c3-bg: rgba(245,158,11,0.20); --c3-ink:#FFE3B0;
+      --c4-bg: rgba(20,184,166,0.20); --c4-ink:#BFF6EE;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg1:#241B4D; --bg2:#1E293B; --bg3:#0F172A;
+    --panel:#1C1832;
+    --panel-2:#272141;
+    --ink:#EFEBFF;
+    --ink-soft:#A39DC9;
+    --line: rgba(239,235,255,0.14);
+    --shadow: 0 16px 36px rgba(0,0,0,0.55);
+    --right:#4ADE80; --correct-bg: rgba(74,222,128,0.20);
+    --wrongc:#FB7185; --wrong-bg: rgba(251,113,133,0.18);
+    --c1-bg: rgba(59,130,246,0.20); --c1-ink:#CFE0FF;
+    --c2-bg: rgba(139,92,246,0.22); --c2-ink:#E4D9FF;
+    --c3-bg: rgba(245,158,11,0.20); --c3-ink:#FFE3B0;
+    --c4-bg: rgba(20,184,166,0.20); --c4-ink:#BFF6EE;
+  }
+
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0; overscroll-behavior-y:contain;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    background:linear-gradient(165deg, var(--bg1) 0%, var(--bg2) 55%, var(--bg3) 100%);
+    background-attachment:fixed;
+    color:var(--ink);
+    font-family:'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height:100vh;
+    min-height:100dvh;
+    -webkit-font-smoothing:antialiased;
+    transition: filter .5s ease;
+    touch-action:manipulation;
+    position:relative;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image: radial-gradient(rgba(255,255,255,0.30) 1.4px, transparent 1.4px);
+    background-size:24px 24px;
+    pointer-events:none;
+    z-index:0;
+  }
+  button, .opt, input{
+    touch-action:manipulation;
+    -webkit-touch-callout:none;
+  }
+  button, .opt{
+    -webkit-user-select:none;
+    user-select:none;
+  }
+  p, h1, h2, h3, .qtext, .feedback, .reflect{
+    -webkit-user-select:text;
+    user-select:text;
+  }
+  body.g1{filter:saturate(0.85) brightness(0.98);}
+  body.g2{filter:saturate(0.6) brightness(0.9) contrast(1.03);}
+  body.g0{filter:none;}
+
+  h1,h2,h3{font-family:'Fredoka', sans-serif; font-weight:600; margin:0 0 0.4em 0; line-height:1.18;}
+  p{line-height:1.55; margin:0 0 1em 0;}
+  a{color:inherit;}
+
+  #wrap{
+    max-width:640px;
+    margin:0 auto;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    padding:20px 16px calc(36px + env(safe-area-inset-bottom));
+    position:relative;
+    z-index:1;
+  }
+
+  /* ===== Level map ===== */
+  .levelmap{
+    display:flex; justify-content:space-between; align-items:center;
+    position:relative;
+    margin-bottom:20px;
+    padding:6px 6px;
+  }
+  .levelmap::before{
+    content:"";
+    position:absolute; left:26px; right:26px; top:50%;
+    height:4px;
+    background:repeating-linear-gradient(90deg, rgba(255,255,255,0.55) 0 8px, transparent 8px 15px);
+    transform:translateY(-50%);
+    z-index:0;
+    border-radius:4px;
+  }
+  .node{
+    position:relative; z-index:1;
+    width:42px; height:42px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.15rem;
+    background:rgba(255,255,255,0.18);
+    border:2.5px solid rgba(255,255,255,0.55);
+    backdrop-filter: blur(2px);
+    transition:all .3s ease;
+  }
+  .node.done{background:var(--gold2); border-color:var(--gold1); box-shadow:0 0 0 4px rgba(251,191,36,0.28);}
+  .node.current{
+    background:#fff; border-color:#fff; transform:scale(1.18);
+    box-shadow:0 4px 14px rgba(0,0,0,0.25);
+    animation:nodePulse 1.7s ease-in-out infinite;
+  }
+  @keyframes nodePulse{
+    0%,100%{box-shadow:0 4px 14px rgba(0,0,0,0.25), 0 0 0 0 rgba(255,255,255,0.55);}
+    50%{box-shadow:0 4px 14px rgba(0,0,0,0.25), 0 0 0 9px rgba(255,255,255,0);}
+  }
+
+  /* ===== Card ===== */
+  .card{
+    background:var(--panel);
+    border-radius:26px;
+    box-shadow:var(--shadow);
+    padding:26px 22px;
+    margin-bottom:16px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:6px;
+    background:linear-gradient(90deg, var(--brand1), var(--c1), var(--c4), var(--gold2));
+  }
+
+  /* ===== Hero header ===== */
+  .herohead{display:flex; align-items:center; gap:14px; margin-bottom:6px;}
+  .heroicon{
+    flex:none;
+    width:56px; height:56px;
+    border-radius:18px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.7rem;
+    background:linear-gradient(135deg, var(--brand1), var(--brand2));
+    box-shadow:0 6px 14px rgba(76,55,168,0.35);
+  }
+  .herohead.hh-cp1 .heroicon{background:linear-gradient(135deg, var(--c1), #1D4ED8);}
+  .herohead.hh-cp2 .heroicon{background:linear-gradient(135deg, var(--c2), #6D28D9);}
+  .herohead.hh-cp3 .heroicon{background:linear-gradient(135deg, var(--c3), #B45309); box-shadow:0 6px 14px rgba(180,83,9,0.35);}
+  .herohead.hh-poster .heroicon{background:linear-gradient(135deg, var(--c4), #0F766E); box-shadow:0 6px 14px rgba(15,118,110,0.35);}
+  .herohead.hh-design .heroicon{background:linear-gradient(135deg, #EC4899, #7C3AED); box-shadow:0 6px 14px rgba(124,58,237,0.35);}
+  .herolabel{
+    font-family:'Fredoka'; font-weight:600; font-size:0.78rem;
+    letter-spacing:0.03em; text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .herohead h1, .herohead h2{margin:0;}
+
+  .kicker{color:var(--ink-soft); font-size:0.93rem;}
+
+  /* ===== Buttons ===== */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    background:linear-gradient(135deg, var(--brand1), var(--brand2));
+    color:#fff;
+    border:none;
+    border-radius:16px;
+    padding:16px 22px;
+    font-family:'Fredoka', sans-serif;
+    font-weight:600;
+    font-size:1.02rem;
+    cursor:pointer;
+    width:100%;
+    box-shadow:0 5px 0 var(--brand-shadow), 0 10px 22px rgba(76,55,168,0.3);
+    transition:transform .09s ease, box-shadow .09s ease, opacity .12s ease;
+  }
+  .btn:active{transform:translateY(4px); box-shadow:0 1px 0 var(--brand-shadow), 0 4px 10px rgba(76,55,168,0.22);}
+  .btn:focus-visible{outline:3px solid var(--focus); outline-offset:2px;}
+  .btn.secondary{
+    background:var(--panel-2);
+    color:var(--ink);
+    box-shadow:0 4px 0 var(--line), 0 6px 14px rgba(0,0,0,0.06);
+    text-decoration:none;
+  }
+  .btn.gold{background:linear-gradient(135deg, var(--gold1), var(--gold2)); color:#3A2A00; box-shadow:0 5px 0 var(--gold-shadow), 0 10px 22px rgba(180,120,10,0.3);}
+  .btn:disabled{opacity:.45; cursor:not-allowed;}
+
+  input[type="text"], input[type="password"]{
+    width:100%;
+    font-family:'Nunito', sans-serif;
+    font-size:1.05rem;
+    padding:15px 16px;
+    border-radius:14px;
+    border:2px solid var(--line);
+    background:var(--panel-2);
+    color:var(--ink);
+    margin-bottom:14px;
+    font-weight:700;
+  }
+  input[type="password"]{letter-spacing:0.4em; font-weight:800; text-align:center; font-size:1.3rem;}
+  input:focus-visible{outline:3px solid var(--focus); outline-offset:1px;}
+
+  /* ===== Hearts / HUD ===== */
+  .hearts{display:flex; gap:7px; align-items:center;}
+  .heart{
+    width:28px; height:28px;
+    position:relative;
+    color:var(--wrongc);
+    animation:heartbeat 2.2s ease-in-out infinite;
+    transition: transform .3s ease, opacity .3s ease;
+  }
+  .heart svg{width:100%; height:100%; display:block; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.15));}
+  .heart.lost{opacity:.2; transform:scale(0.7) rotate(-18deg); animation:none;}
+  @keyframes heartbeat{
+    0%,100%{transform:scale(1);} 8%{transform:scale(1.18);} 16%{transform:scale(1);} 24%{transform:scale(1.1);} 32%{transform:scale(1);}
+  }
+
+  .statrow{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:18px; gap:12px; flex-wrap:wrap;
+  }
+  .points-pill{
+    background:linear-gradient(135deg, var(--gold1), var(--gold2));
+    color:#3A2A00;
+    border-radius:999px;
+    padding:8px 16px;
+    font-family:'Fredoka'; font-weight:600;
+    font-size:0.95rem;
+    box-shadow:0 3px 0 var(--gold-shadow);
+  }
+
+  .qtext{font-size:1.2rem; font-weight:800; margin-bottom:16px; font-family:'Nunito', sans-serif; color:var(--ink);}
+
+  /* ===== Option tiles ===== */
+  #optWrap{display:grid; grid-template-columns:1fr 1fr; gap:11px; margin-bottom:4px;}
+  .opt{
+    display:flex; align-items:center;
+    width:100%;
+    text-align:left;
+    border:2.5px solid transparent;
+    border-radius:16px;
+    padding:15px 14px;
+    margin-bottom:0;
+    font-family:'Fredoka', sans-serif;
+    font-weight:500;
+    font-size:0.97rem;
+    line-height:1.28;
+    color:var(--ink);
+    cursor:pointer;
+    position:relative;
+    overflow:visible;
+    transition:transform .09s ease, box-shadow .09s ease, opacity .2s ease;
+  }
+  .opt:nth-of-type(4n+1){ background:var(--c1-bg); color:var(--c1-ink); box-shadow:0 4px 0 var(--c1); }
+  .opt:nth-of-type(4n+2){ background:var(--c2-bg); color:var(--c2-ink); box-shadow:0 4px 0 var(--c2); }
+  .opt:nth-of-type(4n+3){ background:var(--c3-bg); color:var(--c3-ink); box-shadow:0 4px 0 var(--c3); }
+  .opt:nth-of-type(4n+4){ background:var(--c4-bg); color:var(--c4-ink); box-shadow:0 4px 0 var(--c4); }
+  .opt:nth-child(3):last-child{ grid-column:1 / -1; }
+  .opt:active:not(:disabled){transform:translateY(3px);}
+  .opt:focus-visible{outline:3px solid var(--focus);}
+  .opt:disabled{cursor:default;}
+  #optWrap.answered .opt:not(.correct):not(.wrong){opacity:.38;}
+  .opt.correct{
+    border-color:var(--right);
+    box-shadow:0 4px 0 var(--right), 0 0 0 5px var(--correct-bg);
+    animation:celebrateOpt .6s ease;
+  }
+  .opt.wrong{
+    border-color:var(--wrongc);
+    box-shadow:0 4px 0 var(--wrongc), 0 0 0 5px var(--wrong-bg);
+    animation:shake .35s ease;
+  }
+  .opt.correct::after{
+    content:"\2713"; position:absolute; top:-11px; right:-9px;
+    width:26px; height:26px; border-radius:50%;
+    background:var(--right); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.95rem; font-weight:800;
+    box-shadow:0 3px 7px rgba(0,0,0,0.28);
+    animation:badgeIn .4s cubic-bezier(.3,1.5,.4,1);
+  }
+  .opt.wrong::after{
+    content:"\2715"; position:absolute; top:-11px; right:-9px;
+    width:26px; height:26px; border-radius:50%;
+    background:var(--wrongc); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.85rem; font-weight:800;
+    box-shadow:0 3px 7px rgba(0,0,0,0.28);
+    animation:badgeIn .4s cubic-bezier(.3,1.5,.4,1);
+  }
+  @keyframes celebrateOpt{
+    0%{transform:scale(1);}
+    30%{transform:scale(1.05);}
+    65%{transform:scale(0.98);}
+    100%{transform:scale(1);}
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-6px);}
+    40%{transform:translateX(6px);}
+    60%{transform:translateX(-4px);}
+    80%{transform:translateX(4px);}
+  }
+  @keyframes badgeIn{0%{transform:scale(0) rotate(-20deg); opacity:0;}70%{transform:scale(1.15) rotate(4deg);}100%{transform:scale(1) rotate(0); opacity:1;}}
+
+  .sparkle{
+    position:absolute; top:50%; left:50%;
+    font-size:1.3rem;
+    pointer-events:none;
+    z-index:5;
+    animation:sparkleUp .85s ease-out forwards;
+  }
+  @keyframes sparkleUp{
+    0%{opacity:1; transform:translate(-50%,-50%) scale(0.3) rotate(0deg);}
+    100%{opacity:0; transform:translate(calc(-50% + var(--sx)), calc(-50% + var(--sy))) scale(1.2) rotate(var(--sr));}
+  }
+
+  .feedback{
+    border-radius:14px;
+    padding:14px 16px;
+    margin:14px 0;
+    font-size:0.98rem;
+    font-weight:600;
+    animation:fadeIn .25s ease;
+  }
+  .feedback.good{background:var(--correct-bg); border:2px solid var(--right); color:var(--ink);}
+  .feedback.bad{background:var(--wrong-bg); border:2px solid var(--wrongc); color:var(--ink);}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(-4px);}to{opacity:1; transform:translateY(0);}}
+
+  /* ===== Celebrate / vault ===== */
+  .celebrate{position:relative; text-align:center; padding:6px 0 4px;}
+  .celebrate .badge{
+    width:82px; height:82px; margin:0 auto 14px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 28%, var(--gold1), var(--gold2));
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.2rem;
+    animation:badgeIn .55s cubic-bezier(.2,1.4,.4,1);
+    box-shadow:0 10px 26px rgba(180,120,10,0.4);
+  }
+  .confetti{position:absolute; inset:0; pointer-events:none; overflow:visible;}
+  .confetti span{
+    position:absolute; top:26%; left:50%;
+    width:9px; height:14px;
+    background:var(--c1);
+    opacity:0;
+    animation:confettiFall 1.3s ease-out forwards;
+    animation-delay: calc(var(--i) * 0.035s);
+  }
+  .confetti span:nth-child(5n+1){background:var(--c1);}
+  .confetti span:nth-child(5n+2){background:var(--c2);}
+  .confetti span:nth-child(5n+3){background:var(--c3); border-radius:50%;}
+  .confetti span:nth-child(5n+4){background:var(--c4);}
+  .confetti span:nth-child(5n+5){background:var(--wrongc); clip-path:polygon(50% 0%, 0% 100%, 100% 100%);}
+  @keyframes confettiFall{
+    0%{opacity:1; transform:translate(0,0) rotate(0deg);}
+    100%{opacity:0; transform:translate(var(--dx), 160px) rotate(var(--rot));}
+  }
+
+  .vaultwrap{text-align:center; margin-bottom:6px;}
+  .vaultbadge{
+    width:92px; height:92px; margin:0 auto 12px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 28%, var(--gold1), var(--gold2));
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.4rem;
+    box-shadow:0 10px 24px rgba(180,120,10,0.4);
+    animation:vaultShimmer 2.6s ease-in-out infinite;
+  }
+  @keyframes vaultShimmer{
+    0%,100%{box-shadow:0 10px 24px rgba(180,120,10,0.4);}
+    50%{box-shadow:0 12px 36px rgba(180,120,10,0.62);}
+  }
+
+  /* ===== Death screen ===== */
+  .deathcard{
+    background:#0A0A0A !important;
+    text-align:center;
+    padding:44px 20px 36px;
+    animation:fadeIn .3s ease;
+  }
+  .deathcard::before{background:linear-gradient(90deg, var(--wrongc), #000, var(--wrongc));}
+  .deathcard .skull{
+    font-size:4.6rem;
+    display:block;
+    margin-bottom:8px;
+    filter:drop-shadow(0 0 18px rgba(255,60,90,0.35));
+    animation:deathPulse 1.5s ease-in-out infinite;
+  }
+  @keyframes deathPulse{
+    0%,100%{transform:scale(1); opacity:0.9;}
+    50%{transform:scale(1.08); opacity:1;}
+  }
+  .deathcard h2{
+    color:#F5F5F5; letter-spacing:0.03em; font-weight:700;
+    animation:glitchText 2.6s infinite;
+  }
+  @keyframes glitchText{
+    0%,88%,100%{text-shadow:none;}
+    90%{text-shadow:2px 0 #FF3B5C, -2px 0 #3BE1FF;}
+    93%{text-shadow:-2px 0 #FF3B5C, 2px 0 #3BE1FF;}
+    96%{text-shadow:none;}
+  }
+  .deathcard p{color:#9A9A9A;}
+  .deathcard .btn{background:linear-gradient(135deg,#E8E8E8,#C7C7C7); color:#0A0A0A; box-shadow:0 5px 0 #8C8C8C;}
+
+  /* ===== Posters ===== */
+  .posterspot{
+    background:radial-gradient(ellipse at center, rgba(0,0,0,0.06), transparent 70%);
+    border-radius:20px;
+    padding:10px;
+    margin-bottom:16px;
+  }
+  .posterimg{
+    width:100%;
+    border-radius:14px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.18);
+    display:block;
+  }
+  .posterrow{display:flex; gap:10px; margin-bottom:16px;}
+  .posterrow img{width:33%; height:190px; object-fit:contain; background:var(--panel-2); border-radius:12px; box-shadow:0 6px 14px rgba(0,0,0,0.14);}
+
+  /* ===== Checklist ===== */
+  .checklist{list-style:none; padding:0; margin:0 0 18px 0;}
+  .checklist li{
+    padding:9px 0 9px 34px;
+    position:relative;
+    font-size:0.97rem;
+    font-weight:600;
+  }
+  .checklist li::before{
+    content:"\2713";
+    position:absolute; left:0; top:8px;
+    width:22px; height:22px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--c4), #0F766E);
+    color:#fff;
+    font-size:0.7rem;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 2px 5px rgba(0,0,0,0.2);
+  }
+
+  /* ===== Summary grid ===== */
+  .summarygrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin:16px 0;
+  }
+  .summarygrid .box{
+    border-radius:16px;
+    padding:14px;
+    text-align:center;
+    color:#fff;
+  }
+  .summarygrid .box:nth-child(5n+1){background:linear-gradient(135deg, var(--gold1), var(--gold2)); color:#3A2A00;}
+  .summarygrid .box:nth-child(5n+2){background:linear-gradient(135deg, var(--c1), #1D4ED8);}
+  .summarygrid .box:nth-child(5n+3){background:linear-gradient(135deg, var(--c2), #6D28D9);}
+  .summarygrid .box:nth-child(5n+4){background:linear-gradient(135deg, var(--c4), #0F766E);}
+  .summarygrid .box:nth-child(5n+5){background:linear-gradient(135deg, #64748B, #334155);}
+  .summarygrid .num{font-family:'Fredoka'; font-size:1.7rem; font-weight:700;}
+  .summarygrid .lbl{font-size:0.78rem; margin-top:2px; opacity:0.92; font-weight:600;}
+
+  /* ===== Reflect sticky note ===== */
+  .reflect{
+    background:#FFF6BF;
+    color:#4A3F00;
+    border-radius:6px;
+    padding:20px 20px 22px;
+    margin:20px 4px;
+    font-style:normal;
+    font-family:'Fredoka', sans-serif;
+    font-weight:500;
+    font-size:1.05rem;
+    position:relative;
+    transform:rotate(-1.1deg);
+    box-shadow:0 10px 20px rgba(0,0,0,0.16);
+  }
+  .reflect::before{
+    content:"";
+    position:absolute; top:-11px; left:50%;
+    transform:translateX(-50%) rotate(-3deg);
+    width:64px; height:24px;
+    background:rgba(255,255,255,0.65);
+    border:1px solid rgba(0,0,0,0.06);
+    box-shadow:0 2px 4px rgba(0,0,0,0.1);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) .reflect{background:#3A331A; color:#FFE9A8;}
+  }
+  :root[data-theme="dark"] .reflect{background:#3A331A; color:#FFE9A8;}
+
+  .footlink{text-align:center; margin-top:6px;}
+  .footlink button{
+    background:none; border:none;
+    color:rgba(255,255,255,0.7);
+    font-size:0.8rem;
+    text-decoration:underline;
+    cursor:pointer;
+    font-family:'Nunito', sans-serif;
+  }
+
+  .badge-note{
+    display:inline-block;
+    background:var(--panel-2);
+    border-radius:999px;
+    padding:5px 14px;
+    font-size:0.82rem;
+    font-weight:700;
+    color:var(--ink-soft);
+    margin-bottom:14px;
+  }
+
+  .err{color:var(--wrongc); font-size:0.9rem; font-weight:700; margin:-8px 0 12px; text-align:center;}
+
+  .teacherOnly{
+    margin-top:16px;
+    padding-top:14px;
+    border-top:2px dashed var(--line);
+    text-align:center;
+  }
+  .teacherOnly button{
+    background:none; border:none;
+    color:var(--ink-soft);
+    font-size:0.8rem;
+    text-decoration:underline;
+    cursor:pointer;
+    font-family:'Nunito', sans-serif;
+  }
+
+  @media (max-width:420px){
+    .card{padding:22px 16px;}
+    .heroicon{width:48px; height:48px; font-size:1.4rem; border-radius:14px;}
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div class="levelmap" id="trail"></div>
+  <div id="app"></div>
+  <div class="footlink"><button id="resetBtn" type="button">Reset this device's progress</button></div>
+</div>
+
+<script>
+/* ============ CONFIG ============ */
+// Teacher: these are the unlock codes. Change them here before your lesson if you want different ones.
+const CODES = {
+  cp1: "1234",
+  cp2: "2345",
+  cp3: "3456",
+  poster: "4567",
+  final: "5678"
+};
+
+const CP_META = {
+  cp1: { title:"Audience, Purpose, Form & Register", note:"A quick recap of what you already covered in class.", handout:"Handout A", icon:"\ud83d\udcd6" },
+  cp2: { title:"Academic Integrity", note:"Some of these terms are new \u2014 read the definitions below carefully before you start.", handout:"Handout B", icon:"\u2696\ufe0f" },
+  cp3: { title:"Persuasive Techniques", note:"New ground \u2014 read the \u2018Writing to Persuade\u2019 BBC Bitesize page below before you start.", handout:"Handout C", icon:"\ud83c\udfaf" }
+};
+
+const CP2_DEFINITIONS = [
+  ["Plagiarism", "Presenting someone else's work or ideas as your own."],
+  ["Cheating", "Getting unauthorised help during a test, quiz or exam."],
+  ["Collusion", "Working with someone else on a task you were told to complete independently."],
+  ["Contract cheating", "Paying, or getting someone else, to complete your work for you."],
+  ["Patch-writing", "Stitching together copied text from different sources with just a few words changed, without proper citation."],
+  ["Lifting", "Copying someone's exact words into your work with no quotation marks \u2014 even if you say where it's from."],
+  ["Forgery", "Faking someone else's signature or approval on a document, e.g. a parent's signature on a form."]
+];
+
+const POSTER_IMG = {
+  1: "1.png",
+  2: "2.png",
+  3: "3.png"
+};
+
+/* ============ QUESTION BANKS (unchanged content) ============ */
+function tf(q, ans, explain){ return {q, options:["True","False"], answer: ans ? 0 : 1, explain}; }
+function mc(q, options, answer, explain){ return {q, options, answer, explain}; }
+
+const RAW_Q = {
+  cp1: [
+    mc("Which sentence is written in a formal register?", ["Honestly, the whole experience was completely underwhelming, ngl.","The overall experience proved to be considerably underwhelming.","I can't believe how underwhelming that whole thing was, tbh.","That whole experience was so underwhelming, I literally can't even."], 1, "Same idea, similar length \u2014 but only this one drops the contractions and slang. Register is about those choices, not big words or sentence length."),
+    tf("Formal writing often uses contractions such as \u2018don't\u2019 and \u2018isn't\u2019 to sound more natural.", false, "The opposite \u2014 formal writing spells words out in full."),
+    mc("A leaflet explaining how to assemble a bookshelf has which purpose?", ["To persuade","To entertain","To instruct","To analyse"], 2, "Step-by-step directions = instructing."),
+    mc("An advert convincing you to buy trainers has which purpose?", ["To inform","To instruct","To analyse","To persuade"], 3, "Adverts want you to act \u2014 that's persuading."),
+    mc("A piece of writing that opens \u2018Dear Sir/Madam,\u2019 and argues a viewpoint is which form?", ["Diary entry","Formal essay","Formal letter"], 2, "\u2018Dear Sir/Madam\u2019 is the classic opening of a formal letter."),
+    mc("A personal, day-by-day account of what happened to you, written just for yourself, is which form?", ["Formal letter","Diary entry","Formal essay"], 1, "Private, personal, day-by-day \u2014 that's a diary entry."),
+    mc("A structured piece with an introduction, evidence-based paragraphs and a conclusion, written to argue a formal point, is which form?", ["Diary entry","Formal letter","Formal essay"], 2, "Introduction + evidence + conclusion is the shape of a formal essay."),
+    mc("Which is the most formal alternative to \u2018get\u2019?", ["Grab","Obtain","Snag","Pick up"], 1, "\u2018Obtain\u2019 is precise, formal vocabulary."),
+    mc("A piece of writing formatted as \u2018Q: ... A: ...\u2019, using someone's own spoken words, is which form?", ["Diary entry","Formal letter","Interview"], 2, "Question-and-answer format using someone's actual words is an interview."),
+    tf("Register means matching your vocabulary and tone to your audience and purpose.", true, "Exactly \u2014 that's the definition of register."),
+    mc("You're writing a diary entry that only you will ever read. Which register fits?", ["Informal","Formal"], 0, "Private writing just for yourself calls for an informal register."),
+    mc("You're writing a formal letter of complaint to a company. Which register fits?", ["Informal","Formal"], 1, "A formal letter of complaint needs a formal register."),
+    mc("You're writing a formal essay for your English exam. Which register fits?", ["Formal","Informal"], 0, "Exam essays are assessed formal writing."),
+    mc("You're texting your best friend about weekend plans. Which register fits?", ["Formal","Informal"], 1, "A text to a close friend calls for an informal register."),
+    mc("You're writing an interview for a serious newspaper feature. Which register fits?", ["Informal","Formal"], 1, "A serious newspaper feature calls for a formal register, even though it's based on spoken words.")
+  ],
+  cp2: [
+    mc("Presenting someone else's work or ideas as your own is called:", ["Collusion","Contract cheating","Plagiarism","Patch-writing"], 2, "That's the definition of plagiarism."),
+    mc("Getting someone else to complete a test or exam for you is an example of:", ["Cheating","Collusion","Forgery","Patch-writing"], 0, "Unauthorised help during an assessment is cheating."),
+    mc("Working with a partner on a task you were told to complete independently is:", ["Contract cheating","Plagiarism","Forgery","Collusion"], 3, "Working together when you should work alone is collusion."),
+    mc("Paying a website to write your assignment for you is:", ["Patch-writing","Collusion","Contract cheating","Lifting"], 2, "Paying or using a service to produce your work is contract cheating."),
+    mc("Copying a sentence exactly from a website into your essay, with no quotation marks \u2014 even though you name the website in your bibliography \u2014 is called:", ["Proper referencing","Lifting","Collusion","Contract cheating"], 1, "Naming the source isn't enough \u2014 exact wording needs quotation marks, or it's lifting."),
+    mc("Copying a few sentences from several different sources and changing a few words in each before combining them into one paragraph is:", ["Forgery","Cheating","Contract cheating","Patch-writing"], 3, "Stitching together lightly-changed copied text from multiple sources is patch-writing."),
+    mc("Signing a parent's or teacher's name on a form without their knowledge is:", ["Forgery","Lifting","Collusion","Patch-writing"], 0, "Faking someone's signature or approval is forgery."),
+    tf("Patch-writing still counts as plagiarism, even though the wording has been changed.", true, "Yes \u2014 changing a few words doesn't make copied material your own."),
+    tf("If you name your source, you don't need quotation marks around text you've copied word-for-word.", false, "You still need quotation marks around exact wording \u2014 naming the source alone isn't enough."),
+    mc("If a piece of work is suspected of plagiarism, what commonly happens?", ["The work is ignored","Nothing \u2014 it's too hard to check","The student is expelled immediately","It's reviewed for plagiarism by multiple human and/or software checkers"], 3, "Suspected work is typically reviewed by people and software, not judged on suspicion alone."),
+    mc("Which of these is NOT one of the six core values of academic integrity?", ["Responsibility","Popularity","Fairness","Honesty"], 1, "The six values are honesty, trust, fairness, respect, responsibility and courage \u2014 popularity isn't one.")
+  ],
+  cp3: [
+    mc("\u2018Are you really going to let this happen?\u2019 is an example of:", ["Repetition","A rhetorical question","Statistics","Exaggeration"], 1, "It's a question not meant to be answered \u2014 it just makes the reader think."),
+    mc("A poster reading \u2018We all deserve better\u2019 uses:", ["Statistics","Anecdote","Pronouns","Undermining the opposition"], 2, "\u2018We\u2019 includes the reader in the group \u2014 the pronouns device."),
+    mc("A slogan repeated again and again across a poster, like \u2018Duty. Honour. Service.\u2019, is:", ["Direct address","Repetition","Exaggeration","Statistics"], 1, "Repeating a phrase so it sticks in your mind is repetition."),
+    mc("A recruitment poster claims \u2018Nine out of ten recruits say it was the best decision they ever made.\u2019 This is an example of:", ["Anecdote","Exaggeration","Pronouns","Statistics"], 3, "Numbers used as evidence are statistics."),
+    mc("A poster telling one soldier's personal story to make you care is using:", ["Direct address","Undermining the opposition","Anecdote","Rhetorical question"], 2, "A short story used to make a point feel real is an anecdote."),
+    mc("A poster reads \u2018YOUR COUNTRY NEEDS YOU\u2019, spoken straight at the reader. This is:", ["Repetition","Direct address","Statistics","Exaggeration"], 1, "Speaking straight at the reader using \u2018you\u2019 is direct address."),
+    mc("A poster claims \u2018This is the greatest opportunity you will ever be given.\u2019 This is:", ["Statistics","Anecdote","Exaggeration","Pronouns"], 2, "Overstating something for effect is exaggeration."),
+    mc("A recruitment poster suggests that those who don't join up are less brave than those who do. This is:", ["Direct address","Anecdote","Repetition","Undermining the opposition"], 3, "Putting down or diminishing an alternative to make your side look better is undermining the opposition."),
+    tf("Ethos means earning the reader's trust through shared values.", true, "Correct \u2014 Ethos is about trust and shared values."),
+    tf("Logos means appealing to the reader's emotions.", false, "That's Pathos. Logos is about logic and evidence.")
+  ],
+  bonus: [
+    mc("Repeating the same words at the START of successive sentences is called:", ["Hypophora","Anaphora","Epistrophe"], 1, "Anaphora repeats words at the start of sentences or clauses."),
+    mc("Repeating the same words at the END of successive sentences is called:", ["Anaphora","Hypophora","Epistrophe"], 2, "Epistrophe repeats words at the end of sentences or clauses."),
+    mc("Asking a rhetorical question then immediately answering it yourself is called:", ["Epistrophe","Anaphora","Hypophora"], 2, "That's hypophora \u2014 like \u2018Can we fix it? Yes we can.\u2019")
+  ],
+  poster: [
+    mc("In this poster, Uncle Sam points directly at the reader and the text says \u2018YOU\u2019. What technique is this?", ["Direct address","Statistics","Anecdote","Undermining the opposition"], 0, "Speaking straight at the reader is direct address.", 1),
+    mc("\u2018Will you fill it?\u2019 in this poster is:", ["A statistic phrased as a question","A rhetorical question, not expecting a real answer","An anecdote written as a question","A direct question that expects an answer"], 1, "It's phrased as a question, but nobody's meant to actually answer it aloud \u2014 it just makes the reader reflect.", 2),
+    mc("In this poster, the same soldier figure is drawn again and again in a long line. Which written technique does this echo visually?", ["Repetition","Anecdote","Statistics","Pronouns"], 0, "Repeating the same image has the same effect as repeating words \u2014 it reinforces the message.", 2),
+    mc("\u2018What in the end will settle this war?\u2019 in this poster is:", ["A direct question that expects an answer","A statistic presented as a question","A rhetorical question, not expecting a real answer","An anecdote presented as a question"], 2, "It's posed to make the reader think \u2014 then the poster answers it itself.", 3),
+    mc("The phrase \u2018YOUR DUTY\u2019 in this poster is designed to make the reader feel a strong sense of obligation and guilt if they don't act. This is closest to:", ["Statistics","Emotive language","Anecdote","Undermining the opposition"], 1, "Language chosen specifically to trigger a feeling \u2014 here, guilt and obligation \u2014 is emotive language.", 3),
+    mc("Which technique do all three posters share?", ["Statistics","Anecdote","Direct address","Undermining the opposition"], 2, "Every poster speaks straight at \u2018YOU\u2019 \u2014 direct address is the common thread.", 0)
+  ]
+};
+RAW_Q.poster.forEach((q,i)=>{ q.poster = [1,2,2,3,3,0][i]; });
+
+/* ============ STATE (unchanged) ============ */
+const DEFAULT_STATE = {
+  screen:"start",
+  name:"",
+  totalPoints:0,
+  cps:{
+    cp1:{ order:shuffled(RAW_Q.cp1.length), qi:0, lives:3, pts:0, restarts:0, done:false },
+    cp2:{ order:shuffled(RAW_Q.cp2.length), qi:0, lives:3, pts:0, restarts:0, done:false },
+    cp3:{ order:shuffled(RAW_Q.cp3.length), qi:0, lives:3, pts:0, restarts:0, done:false }
+  },
+  bonus:{ order:shuffled(RAW_Q.bonus.length), qi:0, pts:0, done:false, taken:false },
+  poster:{ order:shuffled(RAW_Q.poster.length), qi:0, done:false },
+  tabSwitches:{ cp1:0, cp2:0, cp3:0, poster:0 },
+  answered:false,
+  lastCorrect:null
+};
+
+function clone(obj){
+  if(typeof structuredClone === "function") return structuredClone(obj);
+  return JSON.parse(JSON.stringify(obj));
+}
+function shuffled(n){
+  const a=[...Array(n).keys()];
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+let state = loadState();
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem("persuasionMissionV2");
+    if(!raw) return clone(DEFAULT_STATE);
+    const parsed = JSON.parse(raw);
+    if(!parsed.screen || !parsed.cps) return clone(DEFAULT_STATE);
+    return parsed;
+  }catch(e){ return clone(DEFAULT_STATE); }
+}
+function saveState(){
+  try{ localStorage.setItem("persuasionMissionV2", JSON.stringify(state)); }catch(e){}
+}
+
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  if(confirm("Clear all progress on this device and start over?")){
+    try{ localStorage.removeItem("persuasionMissionV2"); }catch(e){}
+    state = clone(DEFAULT_STATE);
+    saveState();
+    render();
+  }
+});
+
+document.addEventListener("visibilitychange", ()=>{
+  if(document.hidden){
+    const s = stagePart();
+    if(state.tabSwitches && Object.prototype.hasOwnProperty.call(state.tabSwitches, s)){
+      state.tabSwitches[s]++;
+      saveState();
+    }
+  }
+});
+
+/* ============ HELPERS ============ */
+function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+function currentQuestion(cpKey){
+  const st = state.cps[cpKey];
+  const idx = st.order[st.qi];
+  return RAW_Q[cpKey][idx];
+}
+function bonusQuestion(){
+  const idx = state.bonus.order[state.bonus.qi];
+  return RAW_Q.bonus[idx];
+}
+function posterQuestion(){
+  const idx = state.poster.order[state.poster.qi];
+  return RAW_Q.poster[idx];
+}
+
+function applyGloom(lives){
+  document.body.classList.remove("g0","g1","g2");
+  if(lives===2) document.body.classList.add("g1");
+  else if(lives<=1) document.body.classList.add("g2");
+  else document.body.classList.add("g0");
+}
+
+function heartsHTML(lives){
+  let h = '<div class="hearts">';
+  for(let i=0;i<3;i++){
+    const lost = i >= lives;
+    h += `<span class="heart ${lost?'lost':''}"><svg viewBox="0 0 24 24" fill="${lost?'none':'currentColor'}" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.3 5 5.7 5c2 0 3.4 1.1 4.3 2.4C11 6.1 12.4 5 14.4 5c3.4 0 5.1 3.4 3.7 6.7C19.5 16.4 12 21 12 21z"/></svg></span>`;
+  }
+  h += '</div>';
+  return h;
+}
+
+const LEVEL_ICONS = { cp1:"\ud83d\udcd6", cp2:"\u2696\ufe0f", cp3:"\ud83c\udfaf", poster:"\ud83d\udd0d", waiting:"\ud83c\udfc1" };
+
+function trailHTML(){
+  const order = ["cp1","cp2","cp3","poster","waiting"];
+  let curIndex = 0;
+  if(["cp1"].includes(stagePart())) curIndex=0;
+  else if(stagePart()==="cp2") curIndex=1;
+  else if(stagePart()==="cp3") curIndex=2;
+  else if(stagePart()==="poster") curIndex=3;
+  else if(["waiting","design"].includes(stagePart())) curIndex=4;
+  return order.map((s,i)=>`<div class="node ${i<curIndex?'done':''} ${i===curIndex?'current':''}">${i<curIndex?'\u2605':LEVEL_ICONS[s]}</div>`).join("");
+}
+function stagePart(){
+  const s = state.screen;
+  if(s.startsWith("cp1")) return "cp1";
+  if(s.startsWith("cp2")) return "cp2";
+  if(s.startsWith("cp3")||s.startsWith("bonus")) return "cp3";
+  if(s.startsWith("poster")) return "poster";
+  if(s==="waiting") return "waiting";
+  if(s==="design") return "design";
+  return "start";
+}
+
+/* ============ RENDER ROUTER ============ */
+function render(){
+  document.getElementById("trail").innerHTML = state.screen==="start" ? "" : trailHTML();
+  const app = document.getElementById("app");
+  app.innerHTML = screenHTML();
+  applyGloomForScreen();
+  saveState();
+}
+
+function applyGloomForScreen(){
+  const m = state.screen.match(/^(cp1|cp2|cp3)-quiz$/);
+  if(m){ applyGloom(state.cps[m[1]].lives); }
+  else { document.body.classList.remove("g1","g2"); document.body.classList.add("g0"); }
+}
+
+function screenHTML(){
+  switch(true){
+    case state.screen==="start": return startScreen();
+    case /^cp[123]-intro$/.test(state.screen): return cpIntroScreen(state.screen.split("-")[0]);
+    case /^cp[123]-quiz$/.test(state.screen): return cpQuizScreen(state.screen.split("-")[0]);
+    case /^cp[123]-restarted$/.test(state.screen): return cpRestartedScreen(state.screen.split("-")[0]);
+    case /^cp[123]-locked$/.test(state.screen): return cpLockedScreen(state.screen.split("-")[0]);
+    case state.screen==="bonus-prompt": return bonusPromptScreen();
+    case state.screen==="bonus-quiz": return bonusQuizScreen();
+    case state.screen==="poster-intro": return posterIntroScreen();
+    case state.screen==="poster-quiz": return posterQuizScreen();
+    case state.screen==="poster-locked": return posterLockedScreen();
+    case state.screen==="waiting": return waitingScreen();
+    case state.screen==="design": return designScreen();
+    default: return startScreen();
+  }
+}
+
+/* ============ SCREENS (new visual layer) ============ */
+function startScreen(){
+  return `
+  <div class="card">
+    <div class="herohead">
+      <div class="heroicon">\ud83d\ude80</div>
+      <div>
+        <div class="herolabel">Persuasion Mission</div>
+        <h1>Welcome, recruit!</h1>
+      </div>
+    </div>
+    <p>Three quick checkpoints to test what you already know \u2014 then you'll learn how to persuade, and design your own poster.</p>
+    <p style="margin-bottom:6px; font-weight:800;">What's your name?</p>
+    <input type="text" id="nameInput" placeholder="Type your full name" value="${esc(state.name)}" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false">
+    <div id="nameErr" class="err" style="display:none;">Please type your name first.</div>
+    <button class="btn" id="startBtn">Let's go \ud83d\ude80</button>
+  </div>`;
+}
+
+function cpIntroScreen(cp){
+  const meta = CP_META[cp];
+  let extra = "";
+  if(cp==="cp2"){
+    extra = `<div class="checklist" style="margin-top:10px;">${CP2_DEFINITIONS.map(([term,def])=>`<li><strong>${esc(term)}:</strong> ${esc(def)}</li>`).join("")}</div>`;
+  }
+  if(cp==="cp3"){
+    extra = `<a href="https://www.bbc.co.uk/bitesize/articles/zg3496f" target="_blank" rel="noopener" class="btn secondary" style="margin-bottom:14px;">Open the BBC Bitesize page \u2197</a><p class="kicker">The Bitesize page focuses on adverts, but these techniques work in any kind of persuasive writing \u2014 including the propaganda poster you'll design later in this lesson.</p>`;
+  }
+  return `
+  <div class="card">
+    <div class="herohead hh-${cp}">
+      <div class="heroicon">${meta.icon}</div>
+      <div>
+        <div class="herolabel">Checkpoint ${cp.slice(-1)} of 3</div>
+        <h2>${esc(meta.title)}</h2>
+      </div>
+    </div>
+    <p>${esc(meta.note)}</p>
+    ${extra}
+    <p class="kicker">\u2764\ufe0f\u2764\ufe0f\u2764\ufe0f 3 lives. Get a question wrong and you'll get another go at the same one \u2014 but run out of lives and the whole checkpoint restarts with fresh questions.</p>
+    <button class="btn" id="beginQuiz">Start checkpoint</button>
+  </div>`;
+}
+
+function cpQuizScreen(cp){
+  const st = state.cps[cp];
+  const q = currentQuestion(cp);
+  const total = RAW_Q[cp].length;
+  return `
+  <div class="card">
+    <div class="statrow">
+      ${heartsHTML(st.lives)}
+      <div class="points-pill">\u2b50 ${st.pts} pts</div>
+    </div>
+    <div class="kicker" style="margin-bottom:8px; font-weight:700;">Question ${st.qi+1} of ${total}</div>
+    <div class="qtext">${esc(q.q)}</div>
+    <div id="optWrap">
+      ${q.options.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o)}</button>`).join("")}
+    </div>
+    <div id="feedbackWrap"></div>
+  </div>`;
+}
+
+function cpRestartedScreen(cp){
+  return `
+  <div class="card deathcard">
+    <span class="skull">\u{1F480}</span>
+    <h2>OUT OF LIVES</h2>
+    <p>No mark against you \u2014 but this checkpoint starts over, questions freshly shuffled.</p>
+    <button class="btn" id="restartContinue">Try again</button>
+  </div>`;
+}
+
+function cpLockedScreen(cp){
+  const meta = CP_META[cp];
+  const switches = (state.tabSwitches && state.tabSwitches[cp]) || 0;
+  return `
+  <div class="card">
+    <div class="celebrate">
+      <div class="confetti">${confettiPieces()}</div>
+      <div class="badge">\u2b50</div>
+      <h2>Checkpoint cleared!</h2>
+    </div>
+    <p>Well done \u2014 now put your device down and complete <strong>${esc(meta.handout)}</strong> on paper. Answer every question, then raise your hand.</p>
+    <p class="kicker">Your teacher will check your handout and type the unlock code below.</p>
+    <div style="text-align:center;"><span class="badge-note">\ud83d\udc40 Left this page ${switches} time${switches===1?'':'s'} during this section</span></div>
+    <div class="vaultwrap"><div class="vaultbadge">\ud83d\udd12</div></div>
+    <input type="password" id="codeInput" placeholder="\u2022\u2022\u2022\u2022" inputmode="numeric" maxlength="4" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <div id="codeErr" class="err" style="display:none;">That code isn't right \u2014 ask your teacher to try again.</div>
+    <button class="btn gold" id="unlockBtn">Unlock next section</button>
+    <div class="teacherOnly"><button type="button" class="forceRedoBtn" data-section="${cp}">Teacher: force a redo of this section instead</button></div>
+  </div>`;
+}
+
+function bonusPromptScreen(){
+  return `
+  <div class="card">
+    <div class="herohead">
+      <div class="heroicon">\ud83c\udf1f</div>
+      <div>
+        <div class="herolabel">Optional \u2014 Bonus Round</div>
+        <h2>Fancy a challenge?</h2>
+      </div>
+    </div>
+    <p>Three extra techniques beyond the core list: <strong>anaphora, epistrophe</strong> and <strong>hypophora</strong>. No lives at stake \u2014 pure bonus points if you get them right.</p>
+    <button class="btn gold" id="takeBonus">Try the bonus round</button>
+    <button class="btn secondary" id="skipBonus" style="margin-top:10px;">Skip \u2014 go straight to unlocking</button>
+  </div>`;
+}
+
+function bonusQuizScreen(){
+  const st = state.bonus;
+  const q = bonusQuestion();
+  const total = RAW_Q.bonus.length;
+  return `
+  <div class="card">
+    <div class="statrow">
+      <div class="badge-note">\ud83c\udf1f Bonus \u2014 no lives at risk</div>
+      <div class="points-pill">\u2b50 ${st.pts} bonus pts</div>
+    </div>
+    <div class="kicker" style="margin-bottom:8px; font-weight:700;">Bonus question ${st.qi+1} of ${total}</div>
+    <div class="qtext">${esc(q.q)}</div>
+    <div id="optWrap">
+      ${q.options.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o)}</button>`).join("")}
+    </div>
+    <div id="feedbackWrap"></div>
+  </div>`;
+}
+
+function posterIntroScreen(){
+  return `
+  <div class="card">
+    <div class="herohead hh-poster">
+      <div class="heroicon">\ud83d\udd0d</div>
+      <div>
+        <div class="herolabel">Poster Analysis</div>
+        <h2>Spotting techniques in the wild</h2>
+      </div>
+    </div>
+    <p>Three real recruitment posters. No lives here \u2014 just look closely and see what you can spot.</p>
+    <div class="posterrow">
+      <img src="${POSTER_IMG[1]}" alt="Recruitment poster 1">
+      <img src="${POSTER_IMG[2]}" alt="Recruitment poster 2">
+      <img src="${POSTER_IMG[3]}" alt="Recruitment poster 3">
+    </div>
+    <button class="btn" id="beginPoster">Start analysis</button>
+  </div>`;
+}
+
+function posterQuizScreen(){
+  const st = state.poster;
+  const q = posterQuestion();
+  const total = RAW_Q.poster.length;
+  const imgHTML = q.poster===0
+    ? `<div class="posterrow"><img src="${POSTER_IMG[1]}"><img src="${POSTER_IMG[2]}"><img src="${POSTER_IMG[3]}"></div>`
+    : `<div class="posterspot"><img class="posterimg" src="${POSTER_IMG[q.poster]}" alt="Recruitment poster"></div>`;
+  return `
+  <div class="card">
+    <div class="kicker" style="margin-bottom:8px; font-weight:700;">Question ${st.qi+1} of ${total}</div>
+    ${imgHTML}
+    <div class="qtext">${esc(q.q)}</div>
+    <div id="optWrap">
+      ${q.options.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o)}</button>`).join("")}
+    </div>
+    <div id="feedbackWrap"></div>
+  </div>`;
+}
+
+function posterLockedScreen(){
+  const switches = (state.tabSwitches && state.tabSwitches.poster) || 0;
+  return `
+  <div class="card">
+    <div class="celebrate">
+      <div class="confetti">${confettiPieces()}</div>
+      <div class="badge">\ud83c\udfaf</div>
+      <h2>Nice eye for detail</h2>
+    </div>
+    <p>Raise your hand \u2014 your teacher will check in with you, then type the code below.</p>
+    <div style="text-align:center;"><span class="badge-note">\ud83d\udc40 Left this page ${switches} time${switches===1?'':'s'} during this section</span></div>
+    <div class="vaultwrap"><div class="vaultbadge">\ud83d\udd12</div></div>
+    <input type="password" id="codeInput" placeholder="\u2022\u2022\u2022\u2022" inputmode="numeric" maxlength="4" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <div id="codeErr" class="err" style="display:none;">That code isn't right \u2014 ask your teacher to try again.</div>
+    <button class="btn gold" id="unlockBtn">Unlock next section</button>
+    <div class="teacherOnly"><button type="button" class="forceRedoBtn" data-section="poster">Teacher: force a redo of this section instead</button></div>
+  </div>`;
+}
+
+function waitingScreen(){
+  const restarts = state.cps.cp1.restarts + state.cps.cp2.restarts + state.cps.cp3.restarts;
+  const ts = state.tabSwitches || {cp1:0,cp2:0,cp3:0,poster:0};
+  const totalSwitches = ts.cp1 + ts.cp2 + ts.cp3 + ts.poster;
+  return `
+  <div class="card">
+    <div class="herohead">
+      <div class="heroicon">\ud83c\udfc1</div>
+      <div>
+        <div class="herolabel">Nice work, ${esc(state.name || "recruit")}</div>
+        <h2>Show your teacher this screen</h2>
+      </div>
+    </div>
+    <div class="summarygrid">
+      <div class="box"><div class="num">${state.totalPoints}</div><div class="lbl">Total points</div></div>
+      <div class="box"><div class="num">3 / 3</div><div class="lbl">Checkpoints cleared</div></div>
+      <div class="box"><div class="num">${state.bonus.pts}</div><div class="lbl">Bonus points</div></div>
+      <div class="box"><div class="num">${restarts}</div><div class="lbl">Section restarts</div></div>
+      <div class="box" style="grid-column:1 / -1;"><div class="num">${totalSwitches}</div><div class="lbl">Times left this page (CP1: ${ts.cp1} \u00b7 CP2: ${ts.cp2} \u00b7 CP3: ${ts.cp3} \u00b7 Poster: ${ts.poster})</div></div>
+    </div>
+    <p class="kicker">While you wait for your teacher, have a think about this \u2014 nothing to write down yet:</p>
+    <div class="reflect">\ud83d\udcad How would you persuade a young man to join the army? What techniques would you use, and why?</div>
+    <div class="vaultwrap"><div class="vaultbadge">\ud83d\udd12</div></div>
+    <input type="password" id="codeInput" placeholder="\u2022\u2022\u2022\u2022" inputmode="numeric" maxlength="4" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <div id="codeErr" class="err" style="display:none;">That code isn't right \u2014 ask your teacher to try again.</div>
+    <button class="btn gold" id="unlockBtn">Start the design task</button>
+  </div>`;
+}
+
+function designScreen(){
+  return `
+  <div class="card">
+    <div class="herohead hh-design">
+      <div class="heroicon">\ud83c\udfa8</div>
+      <div>
+        <div class="herolabel">The Brief</div>
+        <h1>Design your poster</h1>
+      </div>
+    </div>
+    <h3>Your task</h3>
+    <p>Design an original poster or flyer to persuade young men to join the army, using <strong>3 persuasive devices of your choosing</strong>.</p>
+    <ul class="checklist">
+      <li>Your target audience is clearly considered</li>
+      <li>A strong headline or slogan</li>
+      <li>Exactly 3 persuasive devices, used deliberately</li>
+      <li>Considered use of image, colour and layout</li>
+      <li>A clear call to action</li>
+      <li>A short technique log: which 3 devices, and where they appear</li>
+    </ul>
+    <h3>Before you design</h3>
+    <p><strong>Audience:</strong> young men. <strong>Purpose:</strong> to persuade. <strong>Form:</strong> a poster/advert \u2014 a new addition to your Form list. <strong>Register:</strong> advert register plays by different rules to essay-formal \u2014 short punchy lines, direct address and imperatives are all correct choices here, not sloppy ones.</p>
+    <p class="kicker">Open your Google Slides file now using your QR code, and get designing.</p>
+  </div>`;
+}
+
+function confettiPieces(){
+  let s = "";
+  for(let i=0;i<18;i++){
+    const dx = Math.round((Math.random()*160)-80);
+    const rot = Math.round((Math.random()*360)-180);
+    s += `<span style="--i:${i}; --dx:${dx}px; --rot:${rot}deg; left:${6+i*5}%;"></span>`;
+  }
+  return s;
+}
+
+/* ============ EVENT HANDLING (unchanged) ============ */
+document.getElementById("app").addEventListener("click", (e)=>{
+  const t = e.target;
+
+  if(t.id==="startBtn"){
+    const val = document.getElementById("nameInput").value.trim();
+    if(!val){ document.getElementById("nameErr").style.display="block"; return; }
+    state.name = val;
+    state.screen = "cp1-intro";
+    render();
+    return;
+  }
+
+  if(t.id==="beginQuiz"){
+    const cp = stagePart();
+    state.screen = cp+"-quiz";
+    render();
+    return;
+  }
+
+  if(t.classList.contains("opt") && !t.disabled){
+    handleAnswer(t);
+    return;
+  }
+
+  if(t.id==="restartContinue"){
+    const cp = stagePart();
+    state.screen = cp+"-quiz";
+    render();
+    return;
+  }
+
+  if(t.id==="unlockBtn"){
+    handleUnlock();
+    return;
+  }
+
+  if(t.id==="takeBonus"){
+    state.bonus.taken = true;
+    state.screen = "bonus-quiz";
+    render();
+    return;
+  }
+  if(t.id==="skipBonus"){
+    state.screen = "cp3-locked";
+    render();
+    return;
+  }
+
+  if(t.id==="beginPoster"){
+    state.screen = "poster-quiz";
+    render();
+    return;
+  }
+
+  if(t.classList.contains("forceRedoBtn")){
+    forceRedo(t.dataset.section);
+    return;
+  }
+});
+
+function forceRedo(section){
+  if(!confirm("Reset this section? This clears points/lives for it and reshuffles the questions.")) return;
+  if(section==="poster"){
+    state.poster.qi = 0;
+    state.poster.done = false;
+    state.poster.order = shuffled(RAW_Q.poster.length);
+    if(state.tabSwitches) state.tabSwitches.poster = 0;
+    state.screen = "poster-quiz";
+  } else {
+    const st = state.cps[section];
+    st.lives = 3; st.pts = 0; st.qi = 0;
+    st.order = shuffled(RAW_Q[section].length);
+    st.restarts++;
+    if(state.tabSwitches) state.tabSwitches[section] = 0;
+    state.screen = section+"-quiz";
+  }
+  render();
+}
+
+function sparkleBurst(container){
+  const glyphs = ["\u2728","\u2b50","\ud83c\udf89"];
+  for(let i=0;i<5;i++){
+    const s = document.createElement("span");
+    s.className = "sparkle";
+    s.textContent = glyphs[i % glyphs.length];
+    const angle = (Math.PI*2/5)*i + Math.random()*0.5;
+    const dist = 46 + Math.random()*22;
+    s.style.setProperty("--sx", Math.round(Math.cos(angle)*dist)+"px");
+    s.style.setProperty("--sy", Math.round(Math.sin(angle)*dist - 20)+"px");
+    s.style.setProperty("--sr", Math.round((Math.random()*140)-70)+"deg");
+    container.appendChild(s);
+    setTimeout(()=>s.remove(), 900);
+  }
+}
+
+function handleAnswer(btn){
+  const screen = state.screen;
+  const i = Number(btn.dataset.i);
+  let q, isBonus=false, isPoster=false, cp=null;
+
+  if(/^cp[123]-quiz$/.test(screen)){ cp = stagePart(); q = currentQuestion(cp); }
+  else if(screen==="bonus-quiz"){ isBonus = true; q = bonusQuestion(); }
+  else if(screen==="poster-quiz"){ isPoster = true; q = posterQuestion(); }
+  else return;
+
+  const correct = i === q.answer;
+  const optWrap = document.getElementById("optWrap");
+  const opts = optWrap.querySelectorAll(".opt");
+  opts.forEach(o=>o.disabled=true);
+  optWrap.classList.add("answered");
+  btn.classList.add(correct ? "correct" : "wrong");
+  if(!correct){ opts[q.answer].classList.add("correct"); }
+  if(correct){ sparkleBurst(btn); }
+
+  let livesNowZero = false;
+  if(!isBonus && !isPoster && cp){
+    const st = state.cps[cp];
+    if(correct){ st.pts += 10; }
+    else {
+      st.lives--;
+      if(st.lives <= 0) livesNowZero = true;
+    }
+    saveState();
+  } else if(isBonus && correct){
+    state.bonus.pts += 15;
+    saveState();
+  }
+
+  const fb = document.getElementById("feedbackWrap");
+  let label = "Continue";
+  if(!isBonus && !isPoster && !correct){ label = livesNowZero ? "Continue" : "Try again"; }
+  fb.innerHTML = `<div class="feedback ${correct?'good':'bad'}"><strong>${correct? (isBonus?"Nice! Bonus points.":"Correct!") : "Not quite."}</strong> ${esc(q.explain)}</div>
+    <button class="btn" id="nextBtn" style="margin-top:6px;">${label}</button>`;
+
+  document.getElementById("nextBtn").addEventListener("click", ()=>{
+    proceed(cp, isBonus, isPoster, correct);
+  });
+}
+
+function proceed(cp, isBonus, isPoster, wasCorrect){
+  if(isBonus){
+    state.bonus.qi++;
+    if(state.bonus.qi >= RAW_Q.bonus.length){
+      state.bonus.done = true;
+      state.totalPoints += state.bonus.pts;
+      state.screen = "cp3-locked";
+    } else {
+      state.screen = "bonus-quiz";
+    }
+    render();
+    return;
+  }
+
+  if(isPoster){
+    state.poster.qi++;
+    if(state.poster.qi >= RAW_Q.poster.length){
+      state.poster.done = true;
+      state.screen = "poster-locked";
+    } else {
+      state.screen = "poster-quiz";
+    }
+    render();
+    return;
+  }
+
+  const st = state.cps[cp];
+  if(wasCorrect){
+    st.qi++;
+    if(st.qi >= RAW_Q[cp].length){
+      st.done = true;
+      state.totalPoints += st.pts;
+      state.screen = (cp==="cp3") ? "bonus-prompt" : cp+"-locked";
+    } else {
+      state.screen = cp+"-quiz";
+    }
+  } else {
+    if(st.lives <= 0){
+      st.restarts++;
+      st.lives = 3;
+      st.pts = 0;
+      st.qi = 0;
+      st.order = shuffled(RAW_Q[cp].length);
+      if(state.tabSwitches) state.tabSwitches[cp] = 0;
+      state.screen = cp+"-restarted";
+    } else {
+      state.screen = cp+"-quiz";
+    }
+  }
+  render();
+}
+
+function handleUnlock(){
+  const input = document.getElementById("codeInput");
+  const val = input.value.trim();
+  const screen = state.screen;
+  let expected, next;
+
+  if(screen==="cp1-locked"){ expected=CODES.cp1; next="cp2-intro"; }
+  else if(screen==="cp2-locked"){ expected=CODES.cp2; next="cp3-intro"; }
+  else if(screen==="cp3-locked"){ expected=CODES.cp3; next="poster-intro"; }
+  else if(screen==="poster-locked"){ expected=CODES.poster; next="waiting"; }
+  else if(screen==="waiting"){ expected=CODES.final; next="design"; }
+  else return;
+
+  if(val === expected){
+    state.screen = next;
+    render();
+  } else {
+    document.getElementById("codeErr").style.display = "block";
+    input.value = "";
+    input.focus();
+  }
+}
+
+/* ============ INIT ============ */
+render();
+</script>
+</body>
+</html>
